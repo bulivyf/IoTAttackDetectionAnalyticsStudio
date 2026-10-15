@@ -1,0 +1,15 @@
+<!doctype html><meta charset="utf-8"><style>html,body{margin:0;padding:0;overflow:hidden}iframe{width:100%;height:455px;border:0}</style><iframe title="Interactive farm network" id="network"></iframe><script>
+const frame=document.getElementById('network');let previous='';
+function send(type,extra={}){window.parent.postMessage({isStreamlitMessage:true,type,...extra},'*')}
+window.addEventListener('message',event=>{
+ if(event.data?.type==='streamlit:render'){
+  const html=event.data.args.html;
+  if(html!==previous){previous=html;frame.srcdoc=html}
+  send('streamlit:setFrameHeight',{height:455});
+ }
+ if(event.source===frame.contentWindow && event.data?.type==='farmflow:select' && typeof event.data.ip==='string'){
+  send('streamlit:setComponentValue',{value:{ip:event.data.ip,token:Date.now()},dataType:'json'});
+ }
+});
+send('streamlit:componentReady',{apiVersion:1});send('streamlit:setFrameHeight',{height:455});
+</script>
